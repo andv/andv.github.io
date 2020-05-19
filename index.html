@@ -1,0 +1,63 @@
+<script src="https://apis.google.com/js/api.js"
+    onload="this.onload=function(){}; gapi.load('client:auth2', initClient)"
+    onreadystatechange="if (this.readyState === 'complete') this.onload()">
+</script>
+<script>
+// на базе https://habr.com/ru/post/440844/
+function initClient() {
+    gapi.client.init({
+        // Ваш ключ API
+        apiKey: AIzaSyBnk83kMn4Kix6qR2m7UidDb5LI1SGyfIw,
+
+        // Ваш идентификатор клиента
+        clientId: 1076657088513-sml552ibqvt8hvnjsnl5f9jlo8scrbq6.apps.googleusercontent.com,
+
+        // Указание, что мы хотим использовать Google Drive API v3
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+
+        // Запрос доступа к application data folder (см. ниже)
+        scope: 'https://www.googleapis.com/auth/drive.appfolder'
+
+    }).then(() => {
+        // Начинаем ловить события логина/логаута (см. ниже)
+        gapi.auth2.getAuthInstance().isSignedIn.listen(onSignIn)
+        // инициализация приложения
+        initApp()
+
+    }, error => {
+        console.log('Failed to init GAPI client', error)
+        // работаем без гугла
+        initApp({showAlert: 'google-init-failed-alert'})
+    })
+}
+
+function isGapiLoaded() {
+    return gapi && gapi.auth2
+}
+
+function logIn() {
+    if (isGapiLoaded()) {
+        // откроется стандартное окно Google с выбором аккаунта
+        gapi.auth2.getAuthInstance().signIn()
+    }
+}
+
+function logOut() {
+    if (isGapiLoaded()) {
+        gapi.auth2.getAuthInstance().signOut()
+    }
+}
+
+function isLoggedIn() {
+    return isGapiLoaded() && gapi.auth2.getAuthInstance().isSignedIn.get()
+}
+
+function onSignIn() {
+    if (isLoggedIn()) {
+        // пользователь зашел
+    } else {
+        // пользователь вышел
+    }
+    // пример реализации см. ниже в разделе "Синхронизация"
+}
+</script>
